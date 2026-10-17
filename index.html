@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>NEXO — Les idées créent des connexions</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="logo"><div class="mark">✦</div>NEXO</div>
+ <div class="search"><input id="search" placeholder="Rechercher dans les publications…" aria-label="Rechercher"></div>
+ <div class="topright"><button class="btn secondary" id="authButton">Connexion</button><div class="avatar" id="topAvatar">N</div></div>
+</header>
+<aside class="left">
+ <nav class="panel nav">
+  <button class="active" data-view="feed">⌂ &nbsp; Fil d'actualité</button>
+  <button data-view="discover">⌕ &nbsp; Découvrir</button>
+  <button data-view="quests">✧ &nbsp; Quêtes créatives</button>
+  <button data-view="profile">◉ &nbsp; Mon profil</button>
+    <button class="hidden" data-view="admin" id="adminNav">⚙ &nbsp; Administration</button>
+ </nav>
+ <section class="panel">
+  <div class="row"><div class="avatar" id="sideAvatar">N</div><div><strong id="sideName">Visiteur</strong><div class="muted small" id="sideHandle">Connecte-toi pour publier</div></div></div>
+  <p class="muted small">Ton univers, tes idées, tes connexions.</p>
+  <button class="btn secondary full-width" id="sideAuth">Créer un compte</button>
+ </section>
+ <p class="notice">NEXO est un projet communautaire. Ne publie jamais ton adresse, ton école, ton numéro de téléphone ou d'autres informations privées.</p>
+</aside>
+<main class="main">
+ <section class="welcome"><div class="eyebrow">TON UNIVERS COMMENCE ICI</div><h1>Les idées créent<br>des connexions.</h1><p>Partage ce qui te passionne, découvre des créateurs et relève des défis avec la communauté.</p></section>
+ <div class="status" id="status" role="status"></div>
+ <section class="panel composer" id="composer">
+  <div class="head"><h2>Qu'est-ce qui te passe par la tête ?</h2><span class="tag">NOUVEAU POST</span></div>
+  <textarea id="postText" maxlength="500" placeholder="Connecte-toi pour partager une idée…"></textarea>
+  <div class="composerfoot"><input class="field" id="postTag" maxlength="24" placeholder="Thème (ex. manga, gaming)"><button class="btn" id="publish">＋ Publier</button></div>
+  <p class="notice">Reste respectueux. Les publications publiques peuvent être vues par tous.</p>
+ </section>
+ <div class="head" id="feedHeading"><h2 id="feedTitle">À découvrir</h2><span class="muted small" id="postCount"></span></div>
+ <section id="posts" class="main"></section>
+ <section id="profileView" class="panel hidden"></section>
+ <section id="questsView" class="panel hidden"><div class="eyebrow">QUÊTE DE LA SEMAINE</div><h2>Imagine un pouvoir inédit ⚡</h2><p>Invente un pouvoir original : son nom, ce qu'il permet de faire et sa limite.</p><button class="btn" id="joinQuest">Participer dans une publication</button></section>
+ <section id="adminView" class="panel admin-view hidden">
+  <div class="head"><div><h2>Gestion des comptes</h2><p class="muted small">Rôles, accès et suppression des comptes NEXO.</p></div><button class="btn secondary" id="refreshUsers" type="button">Actualiser</button></div>
+  <p class="notice" id="adminStatus" role="status">Chargement des comptes…</p>
+  <div class="admin-pagination"><button class="btn secondary" id="adminPrev" type="button" disabled>Précédent</button><span class="muted small" id="adminPageLabel">Page 1</span><button class="btn secondary" id="adminNext" type="button" disabled>Suivant</button></div>
+  <div class="admin-table-wrap">
+   <table class="admin-table">
+    <thead><tr><th>E-mail</th><th>Pseudo</th><th>Inscription</th><th>Rôle</th><th>Accès</th><th>Actions</th></tr></thead>
+    <tbody id="adminUsers"></tbody>
+   </table>
+  </div>
+ </section>
+</main>
+<aside class="right">
+ <section class="panel"><h3>✧ Quêtes créatives</h3><div class="quest"><span class="tag">CETTE SEMAINE</span><strong>Invente un héros</strong><div class="muted small">Crée un personnage que personne n'a imaginé.</div></div><div class="quest"><span class="tag">DÉFI RAPIDE</span><strong>Une idée en 3 phrases</strong><div class="muted small">Présente un concept de jeu, d'histoire ou d'invention.</div></div><button class="btn secondary full-width top-gap" data-view="quests">Voir les défis</button></section>
+ <section class="panel"><h3>◈ Communautés à explorer</h3><div class="person"><div class="avatar">🎮</div><div class="grow"><strong>Gaming</strong><div class="muted small">Jeux et créations</div></div></div><div class="person"><div class="avatar">✍️</div><div class="grow"><strong>Création</strong><div class="muted small">Idées et projets</div></div></div><div class="person"><div class="avatar">🌌</div><div class="grow"><strong>Univers imaginaires</strong><div class="muted small">Manga et histoires</div></div></div></section>
+ <section class="panel"><h3>Règles NEXO</h3><p class="notice">Sois respectueux. Bloque ou signale les contenus problématiques dès que ces fonctions sont activées. Ne publie pas de données privées.</p></section>
+ <p class="footer">NEXO · prototype communautaire</p>
+</aside>
+<nav class="mobile"><button data-view="feed" aria-label="Fil d'actualité">⌂</button><button data-view="discover" aria-label="Découvrir">⌕</button><button data-view="quests" aria-label="Quêtes">✧</button><button data-view="profile" aria-label="Mon profil">◉</button><button class="hidden" data-view="admin" id="mobileAdminNav" aria-label="Administration">⚙</button></nav>
+</div>
+<div class="modalback hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+ <div class="modal"><div class="head"><div><h2 id="authTitle">Bienvenue sur NEXO</h2><div class="muted small" id="authSubtitle">Connecte-toi ou crée ton compte.</div></div><button class="action" id="closeModal" aria-label="Fermer">✕</button></div>
+ <form id="authForm"><label for="email">Adresse e-mail</label><input class="field" id="email" type="email" autocomplete="email" required maxlength="254"><label for="password">Mot de passe</label><input class="field" id="password" type="password" autocomplete="current-password" required minlength="8" maxlength="128"><label for="displayName" id="nameLabel" class="hidden">Nom affiché</label><input class="field hidden" id="displayName" maxlength="30" placeholder="Pseudo public (pas ton nom complet)"><button class="btn" id="authSubmit" type="submit">Se connecter</button></form>
+ <div class="modalfoot"><button class="btn secondary" id="switchAuth" type="button">Créer un compte</button><button class="btn secondary hidden" id="logoutButton" type="button">Se déconnecter</button></div>
+ <p class="notice">Utilise un pseudo. Ne mets pas ton vrai nom complet dans ton profil. La connexion nécessite la configuration Supabase décrite dans le guide.</p>
+ </div>
+</div>
+<script src="app.js" defer></script>
+</body>
+</html>
