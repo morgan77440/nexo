@@ -1,0 +1,89 @@
+NEXO V2 — GUIDE RAPIDE (Chromebook, navigateur)
+
+CONTENU
+- index.html : la structure de l'application web
+- styles.css : les styles de l'application
+- app.js : le fonctionnement et la configuration Supabase
+- schema.sql : tables et règles de sécurité Supabase
+- server.mjs : serveur local Node.js et API SQLite
+- local-schema.sql : tables et règles de la base SQLite locale
+- server.test.mjs : tests automatisés du serveur local
+- LISEZ-MOI.txt : ce guide
+
+IMPORTANT
+Le projet peut être publié gratuitement comme site statique sur GitHub Pages.
+Pour que les comptes et les publications soient partagés entre visiteurs, tu dois créer un projet Supabase et connecter ses identifiants. Les limites gratuites des services peuvent changer.
+Pour travailler sans Supabase, lance le serveur local décrit à la section F. Les comptes et données SQLite restent sur cet ordinateur; GitHub Pages ne peut pas accéder à cette base.
+
+A. CRÉER LA BASE DE DONNÉES
+1. Va sur https://supabase.com/ et crée un compte/projet.
+2. Dans ton projet, ouvre SQL Editor > New query.
+3. Ouvre schema.sql, copie tout son contenu, colle-le dans SQL Editor, puis clique Run. Pour un projet déjà configuré, exécute aussi cette version mise à jour du schéma.
+4. Dans Supabase, ouvre Project Settings > API (ou Connect selon l'interface).
+5. Copie l'URL du projet et la clé publique anon/publishable.
+
+B. CONNECTER LE SITE
+1. Ouvre app.js dans un éditeur de texte.
+2. Cherche les lignes :
+   const SUPABASE_URL = "COLLE_ICI_URL_SUPABASE";
+   const SUPABASE_ANON_KEY = "COLLE_ICI_CLE_ANON_OU_PUBLISHABLE";
+3. Remplace uniquement les textes entre guillemets par ton URL et ta clé publique.
+4. N'utilise JAMAIS la clé secrète service_role dans le navigateur. Elle donne trop de permissions.
+5. Enregistre app.js.
+
+C. PUBLIER GRATUITEMENT SUR GITHUB PAGES
+1. Va sur https://github.com/ et connecte-toi.
+2. Crée un dépôt public appelé nexo-social.
+3. Envoie index.html, styles.css et app.js à la racine du dépôt, sans renommer les fichiers. Ils doivent rester dans le même dossier.
+4. Dans le dépôt : Settings > Pages.
+5. Dans Build and deployment, choisis Deploy from a branch.
+6. Branche main, dossier /(root), puis Save.
+7. Attends quelques minutes et clique sur Visit site. L'adresse sera du type https://TON-PSEUDO.github.io/nexo-social/
+
+D. CRÉER LE PREMIER COMPTE ADMIN
+1. Après avoir exécuté schema.sql, crée ton compte normalement depuis le site avec une adresse e-mail que tu contrôles.
+2. Confirme l'adresse e-mail si Supabase le demande.
+3. Dans Supabase, ouvre SQL Editor > New query et exécute cette requête en remplaçant l'adresse :
+
+    update public.profiles
+    set role = 'admin'
+    where id = (
+       select id from auth.users
+       where lower(email) = lower('TON-EMAIL-ADMIN')
+          and email_confirmed_at is not null
+    );
+
+4. Déconnecte-toi puis reconnecte-toi. L'entrée Administration apparaîtra pour ce compte.
+5. Depuis le panneau, tu peux voir les comptes, changer leur rôle, bloquer leurs actions NEXO ou supprimer leur compte. Tu ne peux pas te supprimer toi-même ni retirer le dernier rôle admin.
+6. Le blocage NEXO interdit de publier, aimer et modifier son profil, mais ne désactive pas la connexion Supabase ni la lecture du fil public.
+7. N'ajoute jamais de mot de passe admin par défaut dans app.js. Ce site statique ne peut pas créer de compte admin confidentiellement au chargement.
+
+E. TESTER
+1. Ouvre le site en ligne.
+2. Crée un compte avec une adresse e-mail que tu peux consulter et un mot de passe fort.
+3. Selon la configuration Supabase, il peut être nécessaire de confirmer l'adresse e-mail.
+4. Publie un post puis ouvre le site dans un autre navigateur pour vérifier qu'il est visible.
+
+F. UTILISER LA BASE SQL LOCALE
+1. Installe Node.js 26 ou une version ultérieure. Aucun paquet npm supplémentaire n'est nécessaire.
+   Pour vérifier le serveur, lance node --test server.test.mjs.
+2. Pour créer le compte admin local au premier démarrage, ouvre un terminal dans le dossier du projet puis exécute :
+
+   export NEXO_ADMIN_EMAIL="admin@example.com"
+   read -s -p "Mot de passe admin: " NEXO_ADMIN_PASSWORD; printf '\n'
+   export NEXO_ADMIN_PASSWORD
+   node server.mjs
+
+   Remplace l'adresse par la tienne et saisis un mot de passe d'au moins 12 caractères au prompt. Le mot de passe n'est pas enregistré dans les fichiers. Si aucun admin n'est nécessaire, lance simplement node server.mjs.
+3. Ouvre http://127.0.0.1:4173/ dans ton navigateur. Le mode SQLite est sélectionné automatiquement.
+4. La base persistante nexo-local.sqlite est créée dans le dossier du projet. Arrête le serveur avec Ctrl+C avant de déplacer ou sauvegarder ce fichier.
+5. Le serveur écoute par défaut sur 0.0.0.0, donc sur toutes les interfaces réseau. Sur cet ordinateur, ouvre http://127.0.0.1:4173/. Depuis un autre appareil du même réseau privé, utilise l'adresse IP privée de cet ordinateur, par exemple http://192.168.1.20:4173/. 0.0.0.0 est une adresse d'écoute, pas une adresse à ouvrir dans le navigateur.
+6. Pour limiter l'écoute à cet ordinateur, arrête le serveur puis lance NEXO_BIND_HOST=127.0.0.1 node server.mjs. N'expose pas ce serveur à Internet et utilise uniquement un réseau privé de confiance; les comptes locaux ne sont pas partagés sur Internet. Pour publier sur GitHub Pages, utilise le mode Supabase.
+
+LIMITES DE CETTE VERSION
+- Fonctionnalités connectées : comptes, fil public, publications, likes et suppression de ses propres posts.
+- Les commentaires, messages privés, upload d'images, signalements, blocages et modération ne sont pas encore implémentés.
+- Avant d'ouvrir à tout le monde, ajoute des fonctions de signalement/modération et lis les règles de sécurité et de confidentialité. Ne collecte pas de données personnelles inutiles.
+- En mode Supabase, le navigateur charge Supabase JS depuis un CDN : une connexion Internet est nécessaire.
+- GitHub Pages ne fournit pas la base de données : Supabase s'en charge.
+- Le mode SQLite local nécessite que le serveur Node.js reste démarré; ses données ne sont accessibles qu'à cet ordinateur.
